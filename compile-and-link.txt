@@ -1,6 +1,7 @@
 # compile and link
 as snake.asm -o snake.o
-ld -dynamic-linker /lib/ld-linux.so.2 -o snake.out snake.o -lc
+as last_char_from_stdin.asm -o last_char_from_stdin.o
+ld -dynamic-linker /lib/ld-linux.so.2 -o snake.out snake.o last_char_from_stdin.o -lc
 
 # termios definitions
 cat /usr/include/i386-linux-gnu/bits/termios.h
