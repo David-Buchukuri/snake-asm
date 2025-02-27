@@ -35,15 +35,6 @@ int foodCol = BOARD_H / 4;
 struct node snake[(BOARD_W * BOARD_H) + 1] = {};
 int snakeHeadIdx = 0;
 
-int getSnakeHeadIdx(){
-    for(int i = 0; i < (BOARD_W * BOARD_H) + 1; i++){
-        if(snake[i].isHead){
-           return i;
-        }
-    }
-    return -1;
-}
-
 int moveSnake(){
     int newRow = 0;
     int newCol = 0;
@@ -173,7 +164,7 @@ int main()
             newDirection = lastChar;  
         }
 
-        int isError = moveSnake(snake, direction);
+        int isError = moveSnake();
         
         // clear console
         printf("\e[1;1H\e[2J");
