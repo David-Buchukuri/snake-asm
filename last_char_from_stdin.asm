@@ -1,8 +1,7 @@
 .section .data
-    lastReadChar:    .byte 0 
-    tempChar:        .byte 0 
-
     .equ STDIN, 0
+    .equ TMP_CHAR_OFFSET, -1
+    .equ LAST_CHAR_OFFSET, -2
 
 .section .text
 .globl last_char_from_stdin
@@ -11,12 +10,16 @@
 last_char_from_stdin:
     pushl %ebp
     movl  %esp, %ebp
-    movb $0, tempChar
-    movb $0, lastReadChar
+
+    subl $2, %esp  
+    movb $0, TMP_CHAR_OFFSET(%ebp)
+    movb $0, LAST_CHAR_OFFSET(%ebp)
 
     loop:
         pushl $1
-        pushl $tempChar
+        # Get address of tmpChar
+        leal TMP_CHAR_OFFSET(%ebp), %eax  
+        pushl %eax
         pushl $STDIN
         call read
         addl $12, %esp
@@ -24,12 +27,12 @@ last_char_from_stdin:
         cmpl $0, %eax 
         je exit
 
-        movb tempChar, %al
-        movb %al, lastReadChar
+        movb TMP_CHAR_OFFSET(%ebp), %al
+        movb %al, LAST_CHAR_OFFSET(%ebp)
         jmp loop
     
     exit:
-        movb lastReadChar, %al
+        movb LAST_CHAR_OFFSET(%ebp), %al
         movl %ebp, %esp
         popl %ebp
         ret
