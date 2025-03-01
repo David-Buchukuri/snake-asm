@@ -1,9 +1,11 @@
 .section .data
     tempChar:        .byte 0
-    printfFormat:    .ascii "%c \n\0"
+    printfCharFormat:    .ascii "%c \n\0"
+    printfNewlineFormat:    .ascii "\n\0"
     ICANON:         .long 2
     ECHO:           .long 8
     TCSANOW:        .long 0
+    direction:      .long 'w'
 
     .equ VMIN,  6
     .equ VTIME, 5
@@ -51,18 +53,34 @@ _start:
         call usleep
         addl $4, %esp
 
-
-        # # # char lastChar = getLastCharFromStdIn();
-        # # # if (lastChar == 'w' || lastChar == 'a' || lastChar == 's' || lastChar == 'd')
-        # # # {
-        # # #     newDirection = lastChar;  
-        # # # }
-
         call last_char_from_stdin
 
         # print input
         pushl %eax
-        pushl $printfFormat
+        pushl $printfCharFormat
+        call printf
+        addl $4, %esp
+        popl %eax
+
+        pushl %eax
+        pushl direction
+        call is_valid_direction
+        addl $4, %esp
+    
+        cmpl $0, %eax
+        je skip_direction_update
+    
+        update_direction:
+            movl (%esp), %eax
+            movl %eax, direction
+    
+        skip_direction_update:
+            # remove remaining argument
+            addl $4, %esp
+        
+        # print current direction
+        pushl direction
+        pushl $printfCharFormat
         call printf
         addl $8, %esp
 
@@ -70,6 +88,10 @@ _start:
 
         cmpl $15, %edi
         je restore_terminal
+
+        pushl $printfNewlineFormat
+        call printf
+        addl $4, %esp
 
         jmp loop
     

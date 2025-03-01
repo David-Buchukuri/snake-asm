@@ -1,72 +1,23 @@
-.section .data
-    # case 1 - output - w
-    old_direction:      .long 'w'
-    new_direction:      .long 'p'
-
-    # # case 2 - output - w
-    # old_direction:      .long 'w'
-    # new_direction:      .long 'v'
-
-    # # case 3 - output - a
-    # old_direction:      .long 'w'
-    # new_direction:      .long 'a'
-
-    # # case 4 - output - d
-    # old_direction:      .long 'w'
-    # new_direction:      .long 'd'
-
-    # # case 4 - output - w
-    # old_direction:      .long 'w'
-    # new_direction:      .long 'w'
-
-    # # case 5 - output - w
-    # old_direction:      .long 'w'
-    # new_direction:      .long 's'
-
-    # # case 6 - output - s
-    # old_direction:      .long 's'
-    # new_direction:      .long 'w'
-
-    # # case 7 - output - a
-    # old_direction:      .long 'a'
-    # new_direction:      .long 'd'
-
-    # # case 8 - output - d
-    # old_direction:      .long 'd'
-    # new_direction:      .long 'a'
-
-    printfFormat:       .ascii "%c \n\0"
+# # int is_valid_direction(currentDirection, newDirection){
+# #     if (newDirection != 'w' || newDirection != 'a' || newDirection != 's' || newDirection != 'd')
+# #     {
+# #         return false;
+# #     }
+# #     // handling that snake cant start moving straight into opposite direction
+# #     if(
+# #         (currentDirection == 'w' && newDirection == 's') ||
+# #         (currentDirection == 's' && newDirection == 'w') ||
+# #         (currentDirection == 'a' && newDirection == 'd') ||
+# #         (currentDirection == 'd' && newDirection == 'a') 
+# #     ){
+# #         return 0;
+# #     }
+# #     return 1;
+# # }
 
 .section .text
-.global _start
-
-_start:
-    pushl new_direction
-    pushl old_direction
-    call is_valid_direction
-    addl $4, %esp
-
-    cmpl $0, %eax
-    je skip_direction_update
-
-    update_direction:
-        movl (%esp), %eax
-        movl %eax, old_direction
-
-    skip_direction_update:
-        # remove remaining argument
-        addl $4, %esp
-    
-    # print old direction
-    pushl old_direction
-    pushl $printfFormat
-    call printf
-    addl $8, %esp
-
-    exit_program:
-        pushl $0
-        call exit
-
+.global is_valid_direction
+.type is_valid_direction, @function
 
 is_valid_direction:
     pushl %ebp
@@ -74,23 +25,6 @@ is_valid_direction:
 
     # saving because will need to overwrite value. will restore at the end
     pushl %ebx
-
-    # # if (lastChar == 'w' || lastChar == 'a' || lastChar == 's' || lastChar == 'd')
-    # # {
-    # #     newDirection = lastChar;
-    # # }
-    # # // handling that snake cant start moving straight into opposite direction
-    # # if(
-    # #     (direction == 'w' && newDirection != 's') ||
-    # #     (direction == 's' && newDirection != 'w') ||
-    # #     (direction == 'a' && newDirection != 'd') ||
-    # #     (direction == 'd' && newDirection != 'a') 
-    # # ){
-    # #     direction = newDirection;
-    # # }
-
-    # movl 12(%ebp), %eax  # new direction
-    # movl 8(%ebp), %ebx  # old direction
 
     cmpl $'w', 12(%ebp)
     je check_opposite_directin
