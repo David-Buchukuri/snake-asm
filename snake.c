@@ -43,16 +43,6 @@ int moveSnake(){
 
     newRow = snake[snakeHeadIdx].row;
     newCol = snake[snakeHeadIdx].col;
-    
-    // handling that snake cant start moving straight into opposite direction
-    if(
-        (direction == 'w' && newDirection != 's') ||
-        (direction == 's' && newDirection != 'w') ||
-        (direction == 'a' && newDirection != 'd') ||
-        (direction == 'd' && newDirection != 'a') 
-    ){
-        direction = newDirection;
-    }
 
     if     (direction == 'w'){newRow -= 1;}
     else if(direction == 's'){newRow += 1;}
@@ -162,6 +152,16 @@ int main()
         if (lastChar == 'w' || lastChar == 'a' || lastChar == 's' || lastChar == 'd')
         {
             newDirection = lastChar;  
+        }
+
+        // handling that snake cant start moving straight into opposite direction
+        if(
+            (direction == 'w' && newDirection != 's') ||
+            (direction == 's' && newDirection != 'w') ||
+            (direction == 'a' && newDirection != 'd') ||
+            (direction == 'd' && newDirection != 'a') 
+        ){
+            direction = newDirection;
         }
 
         int isError = moveSnake();
