@@ -29,7 +29,6 @@ char getLastCharFromStdIn()
 }
 
 char direction = 'w';
-char newDirection = 'w';
 int foodRow = BOARD_W / 4;
 int foodCol = BOARD_H / 4;
 struct node snake[(BOARD_W * BOARD_H) + 1] = {};
@@ -75,8 +74,6 @@ int moveSnake(){
         }
     }
    
-   
-   
     // check if we crashed into ourselves and return 1 if that's the case
     for(int i = 0; i < snakeHeadIdx; i++){
         if(snake[i].row == head.row && snake[i].col == head.col){
@@ -95,6 +92,23 @@ int isSnakeOnPosition(int row, int col){
     }
 
     return 0;
+}
+
+int isValidDirection(char currentDirection, char newDirection){
+    if (newDirection != 'w' && newDirection != 'a' && newDirection != 's' && newDirection != 'd')
+    {
+        return 0;
+    }
+    // handling that snake cant start moving straight into opposite direction
+    if(
+        (currentDirection == 'w' && newDirection == 's') ||
+        (currentDirection == 's' && newDirection == 'w') ||
+        (currentDirection == 'a' && newDirection == 'd') ||
+        (currentDirection == 'd' && newDirection == 'a') 
+    ){
+        return 0;
+    }
+    return 1;
 }
 
 void displaySnake(){
@@ -147,21 +161,11 @@ int main()
 
     while(1)
     {
-        usleep(200000);
+        usleep(1000000);
         char lastChar = getLastCharFromStdIn();
-        if (lastChar == 'w' || lastChar == 'a' || lastChar == 's' || lastChar == 'd')
-        {
-            newDirection = lastChar;  
-        }
-
-        // handling that snake cant start moving straight into opposite direction
-        if(
-            (direction == 'w' && newDirection != 's') ||
-            (direction == 's' && newDirection != 'w') ||
-            (direction == 'a' && newDirection != 'd') ||
-            (direction == 'd' && newDirection != 'a') 
-        ){
-            direction = newDirection;
+        
+        if(isValidDirection(direction, lastChar)){
+            direction = lastChar;
         }
 
         int isError = moveSnake();
@@ -174,7 +178,6 @@ int main()
             printf("\n Crashed! \n");
             break;
         }
-
     }
 
     // Restore old terminal settings
