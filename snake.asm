@@ -1,3 +1,4 @@
+.include "./setting_defs.asm"
 .section .data
     tempChar:        .byte 0
     printfCharFormat:    .ascii "%c \n\0"
