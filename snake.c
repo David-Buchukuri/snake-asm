@@ -10,7 +10,6 @@
 struct node {
     int row;
     int col;
-    char isHead;
 };
 
 char getLastCharFromStdIn()
@@ -35,13 +34,8 @@ struct node snake[(BOARD_W * BOARD_H) + 1] = {};
 int snakeHeadIdx = 0;
 
 int moveSnake(){
-    int newRow = 0;
-    int newCol = 0;
-    // mark old head's head flag as 0
-    snake[snakeHeadIdx].isHead = 0;
-
-    newRow = snake[snakeHeadIdx].row;
-    newCol = snake[snakeHeadIdx].col;
+    int newRow = snake[snakeHeadIdx].row;
+    int newCol = snake[snakeHeadIdx].col;
 
     if     (direction == 'w'){newRow -= 1;}
     else if(direction == 's'){newRow += 1;}
@@ -57,7 +51,6 @@ int moveSnake(){
     struct node head;
     head.row = newRow;
     head.col = newCol;
-    head.isHead = 1;
     snake[snakeHeadIdx + 1] = head;
 
     // if food was on the current cell
@@ -156,12 +149,11 @@ int main()
     struct node head;
     head.col = BOARD_W / 2;
     head.row = BOARD_H / 2;
-    head.isHead = 1;
     snake[0] = head;
 
     while(1)
     {
-        usleep(1000000);
+        usleep(200000);
         char lastChar = getLastCharFromStdIn();
         
         if(isValidDirection(direction, lastChar)){
