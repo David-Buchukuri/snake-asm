@@ -145,7 +145,6 @@ move_snake:
     # }
     # ------------------------
 
-    # TODO implement if branch
     food_check:
         movl ARG_FOOD_ROW_ADDRESS(%ebp), %eax
         movl (%eax), %eax
@@ -166,7 +165,7 @@ move_snake:
         call update_food_positions
         addl $8, %esp
 
-        jmp check_crashed_into_itself
+        jmp check_self_crash
 
 
     shift_all_nodes_behind:
@@ -188,16 +187,47 @@ move_snake:
             movl %edx, SNAKE_NODE_COL_OFFSET(%eax)
 
             cmpl %edi, %ebx
-            jl check_crashed_into_itself
+            jl check_self_crash
 
             addl $1, %edi
             jmp move_snake_loop
+
+    # # ----------
+    # # // check if we crashed into ourselves and return 1 if that's the case
+    # # for(int i = 0; i < snakeHeadIdx; i++){
+    # #     if(snake[i].row == head.row && snake[i].col == head.col){
+    # #         return 1;
+    # #     }
+    # # }
+    # # ----------
     
+    check_self_crash:
+        movl ARG_SNAKE_LAST_IDX_ADDR(%ebp), %edx
+        movl (%edx), %edx
+        movl $0, %edi
 
-    check_crashed_into_itself:
-    # TODO Implement this
+        loop_check_crash_into_itself:       
+            cmpl %edx, %edi
+            jge exit_true
 
+            # load curr node row and col
+            movl %edi, %eax
+            imull $SNAKE_NODE_SIZE, %eax
+            addl ARG_SNAKE_BUFFER(%ebp), %eax
+            movl SNAKE_NODE_ROW_OFFSET(%eax), %ecx
+            movl SNAKE_NODE_COL_OFFSET(%eax), %ebx
 
+            cmp %ecx, VAR_NEW_ROW(%ebp)
+            jne loop_operations_self_crash
+
+            cmp %ebx, VAR_NEW_COL(%ebp)
+            jne loop_operations_self_crash
+
+            jmp exit_false
+
+            loop_operations_self_crash:
+                addl $1, %edi
+                jmp loop_check_crash_into_itself
 
     exit_true:
         movl $1, %eax
