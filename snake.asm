@@ -1,12 +1,20 @@
 .include "./setting_defs.asm"
 .section .data
-    tempChar:        .byte 0
-    printfCharFormat:    .ascii "%c \n\0"
+    tempChar:               .byte 0
+    printfCharFormat:       .ascii "%c \n\0"
     printfNewlineFormat:    .ascii "\n\0"
-    ICANON:         .long 2
-    ECHO:           .long 8
-    TCSANOW:        .long 0
-    direction:      .long 'w'
+    crashedMessage:         .ascii "\n Crashed! \n\0"
+    #clearConsoleMessage:   .ascii "\e[1;1H\e[2J"
+    clearConsoleMessage:    .ascii "\x1B[1;1H\x1B[2J\0"
+
+    ICANON:                 .long 2
+    ECHO:                   .long 8
+    TCSANOW:                .long 0
+
+    direction:              .long 'd'
+    snakeLastIndex:         .long 0
+    foodRow:                .long 3
+    foodCol:                .long 5
 
     .equ VMIN,  6
     .equ VTIME, 5
@@ -15,6 +23,7 @@
     # Allocate space for termios structs (60 bytes)
     .lcomm old_tio, 60
     .lcomm new_tio, 60
+    .lcomm snake, SNAKE_BUFFER_SIZE
 
 .section .text
 .global _start
@@ -46,11 +55,16 @@ _start:
     call tcsetattr
     addl $12, %esp  
 
-    movl $0, %edi
+    # add first node of snake at position 0, 0
+    movl $snake, %eax
+    movl $0, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
+    movl $0, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
+
+    # movl $0, %edi
 
     loop:
         # sleep
-        pushl $3000000
+        pushl $300000
         call usleep
         addl $4, %esp
 
@@ -79,22 +93,55 @@ _start:
             # remove remaining argument
             addl $4, %esp
         
-        # print current direction
-        pushl direction
-        pushl $printfCharFormat
+        pushl $1                  # food col
+        pushl $1                  # food row
+        pushl direction           # direction
+        pushl snakeLastIndex      # last index
+        pushl $snake              # snake buffer address
+        call move_snake
+        addl $20, %esp
+
+        pushl %eax
+
+        # clear console
+        pushl $clearConsoleMessage
         call printf
-        addl $8, %esp
+        addl $4, %esp
 
-        addl $1, %edi
+        # call display snake
+        pushl foodRow
+        pushl foodCol
+        pushl $snake
+        pushl snakeLastIndex
+        call display_snake
+        addl $16, %esp
 
-        cmpl $15, %edi
-        je restore_terminal
+        # check if we crashed
+        popl %eax
+        cmpl $0, %eax
+        je crashed
+        
+        # # print current direction
+        # pushl direction
+        # pushl $printfCharFormat
+        # call printf
+        # addl $8, %esp
+
+        # addl $1, %edi
+
+        # cmpl $15, %edi
+        # je restore_terminal
 
         pushl $printfNewlineFormat
         call printf
         addl $4, %esp
 
         jmp loop
+    
+    crashed:
+        pushl $crashedMessage
+        call printf
+        addl $4, %esp
     
     restore_terminal:
         # tcsetattr(STDIN_FILENO, TCSANOW, &old_tio);

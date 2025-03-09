@@ -1,16 +1,5 @@
-# # use this file to test operatons on snake.
-# # - creating buffer to store snake nodes
-# # - creating new node and adding it to the specified index
-# # - moving snake aka 
-# #     - popping last node and moving all others 1 index down
-# #     - updating old head's head flag so it becomes regular node
 
 
-# # ------- before loop starts ------- # #
-# # struct node head;
-# # head.col = BOARD_W / 2;
-# # head.row = BOARD_H / 2;
-# # snake[0] = head;
 
 # # ------- move snake function ------- # #
 # int moveSnake(){
@@ -57,132 +46,51 @@
 #     return 0;
 # }
 
-# .section .data
-#     snakeHeadIdx: .long 0
-#     printfLongFormat:    .ascii "%d \n\0"
-#     printfNewlineFormat:    .ascii "\n\0"
-# 
-#     .equ BOARD_W, 15
-#     .equ BOARD_H, 7
-#     .equ SNAKE_NODE_SIZE, 8
-#     .equ SNAKE_BUFFER_SIZE, BOARD_W * BOARD_H * SNAKE_NODE_SIZE
-#     .equ SNAKE_NODE_ROW_OFFSET, 0
-#     .equ SNAKE_NODE_COL_OFFSET, 4
-# 
-# .section .bss
-#     .lcomm snake, SNAKE_BUFFER_SIZE
-# 
-# .section .text
-# .global _start
-# _start:
-#     # add node at index 0
-#     movl $0, %edi      # index
-#     movl %edi, %eax
-#     imull $12, %eax
-#     addl $snake, %eax
-# 
-#     movl $4, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
-#     movl $4, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
-# 
-# 
-#     # # add node at index 1
-#     # movl $1, %edi      # index
-#     # movl %edi, %eax
-#     # imull $12, %eax
-#     # addl $snake, %eax
-#     # movl $4, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
-#     # movl $5, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
-# 
-# 
-#     # # add node at index 2
-#     # movl $2, %edi      # index
-#     # movl %edi, %eax
-#     # imull $12, %eax
-#     # addl $snake, %eax
-#     # movl $4, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
-#     # movl $6, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
-# 
-#     # loop to print snake nodes
-#     movl $0, %edi
-# 
-#     loop:
-#         movl %edi, %eax
-#         imull $12, %eax
-#         addl $snake, %eax
-#         pushl SNAKE_NODE_ROW_OFFSET(%eax)
-#         pushl $printfLongFormat
-#         call printf
-#         addl $8, %esp
-# 
-#         movl %edi, %eax
-#         imull $12, %eax
-#         addl $snake, %eax
-#         pushl SNAKE_NODE_COL_OFFSET(%eax)
-#         pushl $printfLongFormat
-#         call printf
-#         addl $8, %esp
-# 
-#         pushl $printfNewlineFormat
-#         call printf
-#         addl $4, %esp
-# 
-# 
-# 
-#         addl $1, %edi
-# 
-#         cmp snakeHeadIdx, %edi 
-#         jg exit_program
-#     
-#         jmp loop
-# 
-#     exit_program:
-#         pushl $0
-#         call exit
-
-.include "./setting_defs.asm"
-.section .data
-    printfLongFormat:    .ascii "%d \n\0"
-    printfNewlineFormat:    .ascii "\n\0"
-.section .bss
-    .lcomm snake, SNAKE_BUFFER_SIZE
-
-.section .text
-.globl _start
-_start:
-    # add node at index 0
-    movl $0, %edi      # index
-    movl %edi, %eax
-    imull $12, %eax
-    addl $snake, %eax
-
-    movl $1, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
-    movl $14, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
-
-    pushl $1
-    pushl $1
-    pushl $'w'
-    pushl $0
-    pushl $snake
-    call move_snake
-    addl $20, %esp
-
-    # print result from move snake
-    pushl %eax
-    pushl $printfLongFormat
-    call printf
-    addl $8, %esp
-
-    exit_program:
-        pushl $0
-        call exit
+# # # .include "./setting_defs.asm"
+# # # .section .data
+# # #     printfLongFormat:    .ascii "%d \n\0"
+# # #     printfNewlineFormat:    .ascii "\n\0"
+# # #     printfStringFormat:    .ascii "%s \n\0"
+# # #     printSnakeNodeMessage:    .ascii "printing snake node\0"
+# # # 
+# # # .section .bss
+# # #     .lcomm snake, SNAKE_BUFFER_SIZE
+# # # 
+# # # .section .text
+# # # .globl _start
+# # # _start:
+# # #     # add node at index 0
+# # #     movl $0, %edi      # index
+# # #     movl %edi, %eax
+# # #     imull $SNAKE_NODE_SIZE, %eax
+# # #     addl $snake, %eax
+# # # 
+# # #     movl $1, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
+# # #     movl $14, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
+# # # 
+# # #     pushl $1
+# # #     pushl $1
+# # #     pushl $'w'
+# # #     pushl $0
+# # #     pushl $snake
+# # #     call move_snake
+# # #     addl $20, %esp
+# # # 
+# # #     # print result from move snake
+# # #     pushl %eax
+# # #     pushl $printfLongFormat
+# # #     call printf
+# # #     addl $8, %esp
+# # # 
+# # #     exit_program:
+# # #         pushl $0
+# # #         call exit
 
 
 # -- arguments --
 # snake buffer address
 # last index
 # direction
-# board_h
-# board_w
 # address of food position row
 # address of food position col
 
@@ -190,14 +98,21 @@ _start:
 # 0 if success
 # 1 if crashed
 
-.equ ARG_SNAKE_BUFFER, 8
-.equ ARG_SNAKE_LAST_IDX, 12
-.equ ARG_DIRECTION, 16
-.equ ARG_FOOD_ROW_ADDRESS, 20
-.equ ARG_FOOD_COL_ADDRESS, 24
+.include "./setting_defs.asm"
 
-.equ VAR_NEW_ROW, -4
-.equ VAR_NEW_COL, -8
+.section .data
+    .equ ARG_SNAKE_BUFFER, 8
+    .equ ARG_SNAKE_LAST_IDX, 12
+    .equ ARG_DIRECTION, 16
+    .equ ARG_FOOD_ROW_ADDRESS, 20
+    .equ ARG_FOOD_COL_ADDRESS, 24
+
+    .equ VAR_NEW_ROW, -4
+    .equ VAR_NEW_COL, -8
+
+.section .text
+.global move_snake
+.type move_snake, @function
 
 move_snake:
     pushl %ebp
@@ -216,7 +131,7 @@ move_snake:
 
     # address of the head node
     movl ARG_SNAKE_LAST_IDX(%ebp), %eax
-    imull $12, %eax
+    imull $SNAKE_NODE_SIZE, %eax
     movl ARG_SNAKE_BUFFER(%ebp), %ebx
     addl %ebx, %eax
 
@@ -280,32 +195,95 @@ move_snake:
     cmpl $BOARD_W, VAR_NEW_COL(%ebp)
     jge exit_false
 
-    exit_true:
-        # ---------- print new row and col
-        pushl VAR_NEW_ROW(%ebp)
-        pushl $printfLongFormat
-        call printf
-        addl $8, %esp
+    # --------
+    # // add new head in the list
+    # struct node head;
+    # head.row = newRow;
+    # head.col = newCol;
+    # snake[snakeHeadIdx + 1] = head;
+    # --------
 
-        pushl VAR_NEW_COL(%ebp)
-        pushl $printfLongFormat
-        call printf
-        addl $8, %esp
+    # add node at index snakeHeadIdx + 1
+    movl ARG_SNAKE_LAST_IDX(%ebp), %edi
+    addl $1, %edi
+    movl %edi, %eax
+    imull $SNAKE_NODE_SIZE, %eax
+    addl ARG_SNAKE_BUFFER(%ebp), %eax
+
+    movl VAR_NEW_ROW(%ebp), %ebx
+    movl %ebx, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
+    movl VAR_NEW_COL(%ebp), %ebx
+    movl %ebx, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
+
+    
+    # ------------------------
+    # // if food was on the current cell
+    #     // increase snakeHeadIdx value by 1
+    #     // generate new food position randomly 
+    # if(newRow == foodRow && newCol == foodCol){
+    #     snakeHeadIdx += 1;
+    #     foodRow = rand() % BOARD_H;
+    #     foodCol = rand() % BOARD_W;
+    # }else{
+    #     // if food wasn't on the current cell, shift all nodes 1 position behind. do this one by one until we reach head node.
+    #     for(int i = 1; i <= snakeHeadIdx + 1; i++){
+    #         snake[i - 1] = snake[i]; 
+    #     }
+    # }
+    # ------------------------
+
+    # TODO implement if branch
+
+    shift_all_nodes_behind:
+        movl $1, %edi
+        movl ARG_SNAKE_LAST_IDX(%ebp), %ebx
+        addl $1, %ebx
+
+        move_snake_loop:
+            movl %edi, %eax
+            imull $SNAKE_NODE_SIZE, %eax
+            addl ARG_SNAKE_BUFFER(%ebp), %eax
+            
+            movl SNAKE_NODE_ROW_OFFSET(%eax), %ecx 
+            movl SNAKE_NODE_COL_OFFSET(%eax), %edx
+
+            subl $SNAKE_NODE_SIZE, %eax
+            movl %ecx, SNAKE_NODE_ROW_OFFSET(%eax) 
+            movl %edx, SNAKE_NODE_COL_OFFSET(%eax)
+
+            cmpl %edi, %ebx
+            jge exit_true
+
+            addl $1, %edi
+            jmp move_snake_loop
+
+
+    exit_true:
+        # # ---------- print new row and col
+        # # pushl VAR_NEW_ROW(%ebp)
+        # # pushl $printfLongFormat
+        # # call printf
+        # # addl $8, %esp
+
+        # # pushl VAR_NEW_COL(%ebp)
+        # # pushl $printfLongFormat
+        # # call printf
+        # # addl $8, %esp
         # ----------  
         movl $1, %eax
         jmp exit_move_snake
     
     exit_false:
         # ---------- print new row and col
-        pushl VAR_NEW_ROW(%ebp)
-        pushl $printfLongFormat
-        call printf
-        addl $8, %esp
+        # # pushl VAR_NEW_ROW(%ebp)
+        # # pushl $printfLongFormat
+        # # call printf
+        # # addl $8, %esp
 
-        pushl VAR_NEW_COL(%ebp)
-        pushl $printfLongFormat
-        call printf
-        addl $8, %esp
+        # # pushl VAR_NEW_COL(%ebp)
+        # # pushl $printfLongFormat
+        # # call printf
+        # # addl $8, %esp
         # ----------  
         movl $0, %eax
         jmp exit_move_snake

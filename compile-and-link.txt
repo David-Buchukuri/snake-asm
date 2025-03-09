@@ -2,7 +2,9 @@
 as snake.asm -o snake.o
 as last_char_from_stdin.asm -o last_char_from_stdin.o
 as is_valid_direction.asm -o is_valid_direction.o
-ld -dynamic-linker /lib/ld-linux.so.2 -o snake.out snake.o last_char_from_stdin.o is_valid_direction.o -lc
+as move_snake.asm -o move_snake.o
+as display_snake.asm -o display_snake.o
+ld -dynamic-linker /lib/ld-linux.so.2 -o snake.out snake.o last_char_from_stdin.o is_valid_direction.o move_snake.o display_snake.o -lc
 
 # termios definitions
 cat /usr/include/i386-linux-gnu/bits/termios.h
