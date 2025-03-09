@@ -11,7 +11,7 @@
     red:                      .ascii "\033[91m\0"
 
 
-# ---- parameters ---- 
+# ---- parameters ---- #
 # food row
 # food col
 # snake buffer address
@@ -107,7 +107,7 @@ display_snake:
         ret
 
 
-# ---- parameters
+# ---- parameters ---- #
 # row
 # col
 # snake head index
@@ -135,8 +135,6 @@ is_snake_on_position:
         movl ARG_SNAKE_ADDR(%ebp), %ecx
         addl %ecx, %eax
 
-        # SNAKE_NODE_ROW_OFFSET(%eax)        
-        # movl SNAKE_NODE_COL_OFFSET(%eax)
         movl SNAKE_NODE_ROW_OFFSET(%eax), %ebx
         movl SNAKE_NODE_COL_OFFSET(%eax), %ecx
 

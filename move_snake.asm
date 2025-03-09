@@ -1,100 +1,11 @@
-
-
-
-# # ------- move snake function ------- # #
-# int moveSnake(){
-#     int newRow = snake[snakeHeadIdx].row;
-#     int newCol = snake[snakeHeadIdx].col;
-# 
-#     if     (direction == 'w'){newRow -= 1;}
-#     else if(direction == 's'){newRow += 1;}
-#     else if(direction == 'a'){newCol -= 1;}
-#     else if(direction == 'd'){newCol += 1;}
-# 
-#     // check if we are out of bounds
-#     if(newRow < 0 || newCol < 0 || newRow >= BOARD_H || newCol >= BOARD_W){
-#         return 1;
-#     }
-# 
-#     // add new head in the list
-#     struct node head;
-#     head.row = newRow;
-#     head.col = newCol;
-#     snake[snakeHeadIdx + 1] = head;
-# 
-#     // if food was on the current cell
-#         // increase snakeHeadIdx value by 1
-#         // generate new food position randomly 
-#     if(newRow == foodRow && newCol == foodCol){
-#         snakeHeadIdx += 1;
-#         foodRow = rand() % BOARD_H;
-#         foodCol = rand() % BOARD_W;
-#     }else{
-#         // if food wasn't on the current cell, shift all nodes 1 position behind. do this one by one until we reach head node.
-#         for(int i = 1; i <= snakeHeadIdx + 1; i++){
-#             snake[i - 1] = snake[i]; 
-#         }
-#     }
-#
-#     // check if we crashed into ourselves and return 1 if that's the case
-#     for(int i = 0; i < snakeHeadIdx; i++){
-#         if(snake[i].row == head.row && snake[i].col == head.col){
-#             return 1;
-#         }
-#     }
-#     
-#     return 0;
-# }
-
-# # # .include "./setting_defs.asm"
-# # # .section .data
-# # #     printfLongFormat:    .ascii "%d \n\0"
-# # #     printfNewlineFormat:    .ascii "\n\0"
-# # #     printfStringFormat:    .ascii "%s \n\0"
-# # #     printSnakeNodeMessage:    .ascii "printing snake node\0"
-# # # 
-# # # .section .bss
-# # #     .lcomm snake, SNAKE_BUFFER_SIZE
-# # # 
-# # # .section .text
-# # # .globl _start
-# # # _start:
-# # #     # add node at index 0
-# # #     movl $0, %edi      # index
-# # #     movl %edi, %eax
-# # #     imull $SNAKE_NODE_SIZE, %eax
-# # #     addl $snake, %eax
-# # # 
-# # #     movl $1, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
-# # #     movl $14, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
-# # # 
-# # #     pushl $1
-# # #     pushl $1
-# # #     pushl $'w'
-# # #     pushl $0
-# # #     pushl $snake
-# # #     call move_snake
-# # #     addl $20, %esp
-# # # 
-# # #     # print result from move snake
-# # #     pushl %eax
-# # #     pushl $printfLongFormat
-# # #     call printf
-# # #     addl $8, %esp
-# # # 
-# # #     exit_program:
-# # #         pushl $0
-# # #         call exit
-
-
-# -- arguments --
+# -- arguments -- #
 # snake buffer address
 # last index
 # direction
 # address of food position row
 # address of food position col
 
-# return
+# return #
 # 0 if success
 # 1 if crashed
 
@@ -289,32 +200,10 @@ move_snake:
 
 
     exit_true:
-        # # ---------- print new row and col
-        # # pushl VAR_NEW_ROW(%ebp)
-        # # pushl $printfLongFormat
-        # # call printf
-        # # addl $8, %esp
-
-        # # pushl VAR_NEW_COL(%ebp)
-        # # pushl $printfLongFormat
-        # # call printf
-        # # addl $8, %esp
-        # ----------  
         movl $1, %eax
         jmp exit_move_snake
     
     exit_false:
-        # ---------- print new row and col
-        # # pushl VAR_NEW_ROW(%ebp)
-        # # pushl $printfLongFormat
-        # # call printf
-        # # addl $8, %esp
-
-        # # pushl VAR_NEW_COL(%ebp)
-        # # pushl $printfLongFormat
-        # # call printf
-        # # addl $8, %esp
-        # ----------  
         movl $0, %eax
         jmp exit_move_snake
 

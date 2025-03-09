@@ -59,7 +59,15 @@ _start:
     movl $0, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
     movl $0, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
 
-    # movl $0, %edi
+    # set seed as current time for rand
+    pushl $0            
+    call time
+    addl $4, %esp
+
+    pushl %eax
+    call srand
+    addl $4, %esp
+
 
     loop:
         # sleep
@@ -119,21 +127,6 @@ _start:
         popl %eax
         cmpl $0, %eax
         je crashed
-        
-        # # print current direction
-        # pushl direction
-        # pushl $printfCharFormat
-        # call printf
-        # addl $8, %esp
-
-        # addl $1, %edi
-
-        # cmpl $15, %edi
-        # je restore_terminal
-
-        # pushl $printfNewlineFormat
-        # call printf
-        # addl $4, %esp
 
         jmp loop
     
