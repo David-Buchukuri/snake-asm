@@ -1,65 +1,15 @@
-# # # void displaySnake(){
-# # #     // CYAN      = '\033[96m'
-# # #     // YELLOW    = '\033[93m'
-# # #     // RED       = '\033[91m'
-# # # 
-# # #     for(int row = 0; row < BOARD_H; row++){
-# # #         for(int col = 0; col < BOARD_W; col++){
-# # #             if(isSnakeOnPosition(row, col)){
-# # #                 printf("\033[96m");
-# # #                 printf("*");
-# # #             }
-# # #             else if(foodRow == row && foodCol == col){
-# # #                 printf("\033[91m");
-# # #                 printf("$");
-# # #             }
-# # #             else{
-# # #                 printf("\033[93m");
-# # #                 printf("-");
-# # #             }
-# # #         }
-# # #         printf("\n");
-# # #     }
-# # # }
-
 .include "./setting_defs.asm"
 
-# .section .bss
-#     .lcomm snake, SNAKE_BUFFER_SIZE
-# 
 .section .data
     printfNewlineFormat:      .ascii "\n\0"
     printfAsterisk:           .ascii "*\0"
     printfDash:               .ascii "-\0"
     printfFood:               .ascii "$\0"
-# 
-# 
-# .section .text
-# .global _start
-# _start:
-#     # add first node of snake
-#     movl $snake, %eax
-#     movl $1, SNAKE_NODE_ROW_OFFSET(%eax)  # setting row
-#     movl $1, SNAKE_NODE_COL_OFFSET(%eax)  # setting col
-# 
-#     addl $SNAKE_NODE_SIZE, %eax
-#     movl $2, SNAKE_NODE_ROW_OFFSET(%eax)
-#     movl $1, SNAKE_NODE_COL_OFFSET(%eax)
-# 
-#     addl $SNAKE_NODE_SIZE, %eax
-#     movl $2, SNAKE_NODE_ROW_OFFSET(%eax)
-#     movl $0, SNAKE_NODE_COL_OFFSET(%eax)
-# 
-#     pushl $5
-#     pushl $9
-#     pushl $snake
-#     pushl $2
-#     call display_snake
-#     addl $16, %esp
-# 
-#     exit_program:
-#         pushl $0
-#         call exit
+
+    cyan:                     .ascii "\033[96m\0"
+    yellow:                   .ascii "\033[93m\0"
+    red:                      .ascii "\033[91m\0"
+
 
 # ---- parameters ---- 
 # food row
@@ -100,6 +50,10 @@ display_snake:
             cmpl $1, %eax
             jne food_check
 
+            pushl $cyan
+            call printf
+            addl $4, %esp
+
             pushl $printfAsterisk
             call printf
             addl $4, %esp
@@ -114,12 +68,20 @@ display_snake:
                 cmpl %eax, VAR_COL_IDX(%ebp)
                 jne print_board_cell
 
+                pushl $yellow
+                call printf
+                addl $4, %esp
+
                 pushl $printfFood
                 call printf
                 addl $4, %esp
                 jmp loop_operations_loop_col
 
             print_board_cell:
+                pushl $red
+                call printf
+                addl $4, %esp
+
                 pushl $printfDash
                 call printf
                 addl $4, %esp

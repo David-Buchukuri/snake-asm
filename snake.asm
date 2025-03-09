@@ -4,7 +4,6 @@
     printfCharFormat:       .ascii "%c \n\0"
     printfNewlineFormat:    .ascii "\n\0"
     crashedMessage:         .ascii "\n Crashed! \n\0"
-    #clearConsoleMessage:   .ascii "\e[1;1H\e[2J"
     clearConsoleMessage:    .ascii "\x1B[1;1H\x1B[2J\0"
 
     ICANON:                 .long 2
@@ -64,7 +63,7 @@ _start:
 
     loop:
         # sleep
-        pushl $300000
+        pushl $200000
         call usleep
         addl $4, %esp
 
@@ -93,10 +92,10 @@ _start:
             # remove remaining argument
             addl $4, %esp
         
-        pushl $1                  # food col
-        pushl $1                  # food row
+        pushl $foodCol            # food col
+        pushl $foodRow            # food row
         pushl direction           # direction
-        pushl snakeLastIndex      # last index
+        pushl $snakeLastIndex      # last index
         pushl $snake              # snake buffer address
         call move_snake
         addl $20, %esp
@@ -132,9 +131,9 @@ _start:
         # cmpl $15, %edi
         # je restore_terminal
 
-        pushl $printfNewlineFormat
-        call printf
-        addl $4, %esp
+        # pushl $printfNewlineFormat
+        # call printf
+        # addl $4, %esp
 
         jmp loop
     

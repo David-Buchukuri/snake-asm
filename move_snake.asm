@@ -102,7 +102,7 @@
 
 .section .data
     .equ ARG_SNAKE_BUFFER, 8
-    .equ ARG_SNAKE_LAST_IDX, 12
+    .equ ARG_SNAKE_LAST_IDX_ADDR, 12
     .equ ARG_DIRECTION, 16
     .equ ARG_FOOD_ROW_ADDRESS, 20
     .equ ARG_FOOD_COL_ADDRESS, 24
@@ -130,7 +130,8 @@ move_snake:
     subl $8, %esp
 
     # address of the head node
-    movl ARG_SNAKE_LAST_IDX(%ebp), %eax
+    movl ARG_SNAKE_LAST_IDX_ADDR(%ebp), %eax
+    movl (%eax), %eax
     imull $SNAKE_NODE_SIZE, %eax
     movl ARG_SNAKE_BUFFER(%ebp), %ebx
     addl %ebx, %eax
@@ -204,7 +205,8 @@ move_snake:
     # --------
 
     # add node at index snakeHeadIdx + 1
-    movl ARG_SNAKE_LAST_IDX(%ebp), %edi
+    movl ARG_SNAKE_LAST_IDX_ADDR(%ebp), %edi
+    movl (%edi), %edi
     addl $1, %edi
     movl %edi, %eax
     imull $SNAKE_NODE_SIZE, %eax
@@ -233,10 +235,33 @@ move_snake:
     # ------------------------
 
     # TODO implement if branch
+    food_check:
+        movl ARG_FOOD_ROW_ADDRESS(%ebp), %eax
+        movl (%eax), %eax
+        cmpl %eax, VAR_NEW_ROW(%ebp)
+        jne shift_all_nodes_behind
+
+        movl ARG_FOOD_COL_ADDRESS(%ebp), %eax
+        movl (%eax), %eax
+        cmpl %eax, VAR_NEW_COL(%ebp)
+        jne shift_all_nodes_behind
+
+        # increment snake head index via address
+        movl ARG_SNAKE_LAST_IDX_ADDR(%ebp), %eax
+        addl $1, (%eax)
+
+        pushl ARG_FOOD_ROW_ADDRESS(%ebp)
+        pushl ARG_FOOD_COL_ADDRESS(%ebp)
+        call update_food_positions
+        addl $8, %esp
+
+        jmp check_crashed_into_itself
+
 
     shift_all_nodes_behind:
         movl $1, %edi
-        movl ARG_SNAKE_LAST_IDX(%ebp), %ebx
+        movl ARG_SNAKE_LAST_IDX_ADDR(%ebp), %ebx
+        movl (%ebx), %ebx
         addl $1, %ebx
 
         move_snake_loop:
@@ -252,10 +277,15 @@ move_snake:
             movl %edx, SNAKE_NODE_COL_OFFSET(%eax)
 
             cmpl %edi, %ebx
-            jge exit_true
+            jl check_crashed_into_itself
 
             addl $1, %edi
             jmp move_snake_loop
+    
+
+    check_crashed_into_itself:
+    # TODO Implement this
+
 
 
     exit_true:
@@ -295,3 +325,34 @@ move_snake:
 
 
 
+.equ ARG_FOOD_ADDR_1, 8
+.equ ARG_FOOD_ADDR_2, 12
+
+update_food_positions:
+    pushl %ebp
+    movl  %esp, %ebp
+
+
+    call rand
+                          # Dividend in already in eax from rand
+    movl $0, %edx         # Clear edx (will hold high bits of dividend)
+    movl $BOARD_W, %ebx   # Put divisor in ebx
+    divl %ebx
+
+    movl ARG_FOOD_ADDR_1(%ebp), %eax
+    movl %edx, (%eax)
+
+
+    call rand
+                          
+    movl $0, %edx
+    movl $BOARD_H, %ebx   
+    divl %ebx
+
+    movl ARG_FOOD_ADDR_2(%ebp), %eax
+    movl %edx, (%eax)
+
+    update_food_positions_exit:
+        movl %ebp, %esp
+        popl %ebp
+        ret
