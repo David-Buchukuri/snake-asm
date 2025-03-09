@@ -1,13 +1,13 @@
 # -- arguments -- #
-# snake buffer address
-# last index
-# direction
-# address of food position row
 # address of food position col
+# address of food position row
+# direction
+# last index
+# snake buffer address
 
 # return #
-# 0 if success
-# 1 if crashed
+# 0 if crashed
+# 1 if success
 
 .include "./setting_defs.asm"
 
@@ -28,9 +28,6 @@
 move_snake:
     pushl %ebp
     movl  %esp, %ebp
-
-    # !! TODO !!
-    # save all registers I'm using and then pop at the end
 
     # --------
     # int newRow = snake[snakeHeadIdx].row;
@@ -241,7 +238,6 @@ move_snake:
         movl %ebp, %esp
         popl %ebp
         ret
-
 
 
 .equ ARG_FOOD_ADDR_1, 8

@@ -1,23 +1,9 @@
-# # int is_valid_direction(currentDirection, newDirection){
-# #     if (newDirection != 'w' || newDirection != 'a' || newDirection != 's' || newDirection != 'd')
-# #     {
-# #         return false;
-# #     }
-# #     // handling that snake cant start moving straight into opposite direction
-# #     if(
-# #         (currentDirection == 'w' && newDirection == 's') ||
-# #         (currentDirection == 's' && newDirection == 'w') ||
-# #         (currentDirection == 'a' && newDirection == 'd') ||
-# #         (currentDirection == 'd' && newDirection == 'a') 
-# #     ){
-# #         return 0;
-# #     }
-# #     return 1;
-# # }
-
 .section .text
 .global is_valid_direction
 .type is_valid_direction, @function
+
+.equ ARG_NEW_DIRECTION, 12
+.equ ARG_CURR_DIRECTION, 8
 
 is_valid_direction:
     pushl %ebp
@@ -26,24 +12,24 @@ is_valid_direction:
     # saving because will need to overwrite value. will restore at the end
     pushl %ebx
 
-    cmpl $'w', 12(%ebp)
+    cmpl $'w', ARG_NEW_DIRECTION(%ebp)
     je check_opposite_directin
 
-    cmpl $'a', 12(%ebp)
+    cmpl $'a', ARG_NEW_DIRECTION(%ebp)
     je check_opposite_directin
 
-    cmpl $'s', 12(%ebp)
+    cmpl $'s', ARG_NEW_DIRECTION(%ebp)
     je check_opposite_directin
 
-    cmpl $'d', 12(%ebp)
+    cmpl $'d', ARG_NEW_DIRECTION(%ebp)
     je check_opposite_directin
 
     jmp exit_false_is_valid_direction
 
     check_opposite_directin:
         # check 'w' and 's' combo
-        pushl 12(%ebp)
-        pushl 8(%ebp)
+        pushl ARG_NEW_DIRECTION(%ebp)
+        pushl ARG_CURR_DIRECTION(%ebp)
         pushl $'w'
         pushl $'s'
         call are_chars_equal
@@ -53,8 +39,8 @@ is_valid_direction:
         je exit_false_is_valid_direction
 
         # check 's' and 'w' combo
-        pushl 12(%ebp)
-        pushl 8(%ebp)
+        pushl ARG_NEW_DIRECTION(%ebp)
+        pushl ARG_CURR_DIRECTION(%ebp)
         pushl $'s'
         pushl $'w'
         call are_chars_equal
@@ -64,8 +50,8 @@ is_valid_direction:
         je exit_false_is_valid_direction
 
         # check 'a' and 'd' combo
-        pushl 12(%ebp)
-        pushl 8(%ebp)
+        pushl ARG_NEW_DIRECTION(%ebp)
+        pushl ARG_CURR_DIRECTION(%ebp)
         pushl $'a'
         pushl $'d'
         call are_chars_equal
@@ -75,8 +61,8 @@ is_valid_direction:
         je exit_false_is_valid_direction
 
         # check 'd' and 'a' combo
-        pushl 12(%ebp)
-        pushl 8(%ebp)
+        pushl ARG_NEW_DIRECTION(%ebp)
+        pushl ARG_CURR_DIRECTION(%ebp)
         pushl $'d'
         pushl $'a'
         call are_chars_equal
