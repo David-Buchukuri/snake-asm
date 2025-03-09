@@ -77,13 +77,6 @@ _start:
 
         call last_char_from_stdin
 
-        # print input
-        pushl %eax
-        pushl $printfCharFormat
-        call printf
-        addl $4, %esp
-        popl %eax
-
         pushl %eax
         pushl direction
         call is_valid_direction
@@ -100,11 +93,11 @@ _start:
             # remove remaining argument
             addl $4, %esp
         
-        pushl $foodCol            # food col
-        pushl $foodRow            # food row
-        pushl direction           # direction
-        pushl $snakeLastIndex      # last index
-        pushl $snake              # snake buffer address
+        pushl $foodCol
+        pushl $foodRow
+        pushl direction
+        pushl $snakeLastIndex
+        pushl $snake
         call move_snake
         addl $20, %esp
 

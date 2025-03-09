@@ -250,8 +250,8 @@ update_food_positions:
 
     call rand
                           # Dividend in already in eax from rand
-    movl $0, %edx         # Clear edx (will hold high bits of dividend)
-    movl $BOARD_W, %ebx   # Put divisor in ebx
+    movl $0, %edx
+    movl $BOARD_W, %ebx
     divl %ebx
 
     movl ARG_FOOD_ADDR_1(%ebp), %eax
